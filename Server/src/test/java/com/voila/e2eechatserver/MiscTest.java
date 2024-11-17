@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
-public class PubKeyTest {
+public class MiscTest {
 
     @SneakyThrows
     @Test
@@ -18,4 +18,17 @@ public class PubKeyTest {
         System.out.println(HexUtils.toHexString(keyPair.getPublic().getEncoded()));
 
     }
+
+    @Test
+    void ascii(){
+        for(int i = 0x21; i < 0x7f; i++){
+            System.out.println((char) i);
+        }
+    }
+
+    @Test
+    void regex(){
+        System.out.println("".matches("[a-zA-Z0-9_]+"));
+    }
+
 }

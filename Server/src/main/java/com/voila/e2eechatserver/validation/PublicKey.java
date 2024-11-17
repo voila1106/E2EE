@@ -15,8 +15,8 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.X509EncodedKeySpec;
 
-@Constraint(validatedBy = PublicKey.PublicKeyValidator.class) // 指定校验器
-@Target({ElementType.FIELD, ElementType.PARAMETER}) // 可用在字段和参数
+@Constraint(validatedBy = PublicKey.PublicKeyValidator.class)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PublicKey {
     String message() default "Invalid public key";
