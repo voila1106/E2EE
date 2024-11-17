@@ -4,9 +4,14 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
+// 可能会用来辅助本地化
 public enum ErrorCode {
     INVALID_PUBLIC_KEY(1001,"Invalid public key"),
-    INVALID_PASSWORD(1002,"Invalid password"),;
+    INVALID_PASSWORD(1002,"Invalid password"),
+
+    NO_SUCH_USER(2001,"No such user"),
+    WRONG_PASSWORD(2002,"Wrong password"),
+    ;
 
     private static final Map<Integer,ErrorCode> VALUES;
     static {

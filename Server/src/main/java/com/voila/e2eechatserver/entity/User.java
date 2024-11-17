@@ -16,4 +16,10 @@ public class User {
     String pwHash;
     String avatar;
     String publicKey;
+
+    public void update(User other){
+        nickname=other.nickname;
+        desc=other.desc;
+        avatar=other.avatar;
+    }
 }

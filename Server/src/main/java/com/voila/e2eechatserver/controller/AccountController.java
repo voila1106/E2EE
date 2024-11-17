@@ -6,6 +6,7 @@ import com.voila.e2eechatserver.mapper.AccountMapper;
 import com.voila.e2eechatserver.validation.Password;
 import com.voila.e2eechatserver.validation.PublicKey;
 import com.voila.e2eechatserver.validation.UserId;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.hibernate.validator.constraints.Length;
@@ -41,6 +42,20 @@ public class AccountController {
         accountMapper.register(user);
         return SimpleMsg.OK;
     }
+
+    @PostMapping("/login")
+    public Object login(String id, String password, HttpServletRequest request){
+        User user = accountMapper.getById(id);
+        if(user == null){
+            return simpleMsg(400, "User not found");
+        }
+        if(encodePassword(password, id).equals(user.getPwHash())){
+            request.getSession().setAttribute("user", user);
+            return SimpleMsg.OK;
+        }
+        return simpleMsg(400, "Wrong password");
+    }
+
 
     @SneakyThrows
     private String encodePassword(String password,String id) {
