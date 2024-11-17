@@ -3,12 +3,11 @@ package com.voila.e2eechatserver.controller;
 import com.voila.e2eechatserver.entity.SimpleMsg;
 import com.voila.e2eechatserver.entity.User;
 import com.voila.e2eechatserver.mapper.AccountMapper;
-import com.voila.e2eechatserver.util.HexUtils;
-import jakarta.annotation.Nonnull;
+import com.voila.e2eechatserver.validation.PublicKey;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.SneakyThrows;
+import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,20 +26,22 @@ public class AccountController {
     AccountMapper accountMapper;
 
     @PostMapping("/register")
-    public Object register(@NotEmpty String id,@NotEmpty String nickname,
-                           @NotEmpty String password,@NotEmpty String publicKey) {
-        if(accountMapper.checkAccountCount(id) > 0){
-            return simpleMsg(400, "account exists");
+    public Object register(@NotEmpty String id, @NotEmpty String nickname,
+                           @NotEmpty String password, @PublicKey String publicKey){
+
+        if(accountMapper.getById(id) != null){
+            return simpleMsg(400, "Account exists");
         }
-        User user=User.builder().id(id).nickname(nickname).publicKey(publicKey).pwHash(encodePassword(password)).build();
+
+        User user = User.builder().id(id).nickname(nickname).publicKey(publicKey).pwHash(encodePassword(password, id)).build();
         accountMapper.register(user);
         return SimpleMsg.OK;
     }
 
     @SneakyThrows
-    private String encodePassword(String password) {
+    private String encodePassword(String password,String id) {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-        return HexUtils.bytesToHex(hash);
+        byte[] hash = digest.digest((password + id + SALT).getBytes(StandardCharsets.UTF_8));
+        return HexUtils.toHexString(hash);
     }
 }
