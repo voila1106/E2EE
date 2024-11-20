@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.socket.WebSocketSession;
 
 @Data
 @NoArgsConstructor
@@ -16,6 +17,8 @@ public class User {
     String pwHash;
     String avatar;
     String publicKey;
+
+    WebSocketSession wsSession;
 
     public void update(User other){
         nickname=other.nickname;

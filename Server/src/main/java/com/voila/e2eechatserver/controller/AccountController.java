@@ -49,11 +49,12 @@ public class AccountController {
         if(user == null){
             return simpleMsg(400, "User not found");
         }
-        if(encodePassword(password, id).equals(user.getPwHash())){
-            request.getSession().setAttribute("user", user);
-            return SimpleMsg.OK;
+        if(!encodePassword(password, id).equals(user.getPwHash())){
+            return simpleMsg(400, "Wrong password");
         }
-        return simpleMsg(400, "Wrong password");
+
+        request.getSession().setAttribute("user", user);
+        return SimpleMsg.OK;
     }
 
 
