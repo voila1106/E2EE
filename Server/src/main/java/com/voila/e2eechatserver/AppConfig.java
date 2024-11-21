@@ -19,6 +19,9 @@ public class AppConfig implements WebMvcConfigurer, WebSocketConfigurer {
     @Autowired
     LoginInterceptor loginInterceptor;
 
+    @Autowired
+    WsHandler wsHandler;
+
     @Override
     public void addInterceptors(@NotNull InterceptorRegistry registry){
         registry.addInterceptor(loginInterceptor).addPathPatterns("/**").excludePathPatterns("/account/**");
@@ -26,6 +29,6 @@ public class AppConfig implements WebMvcConfigurer, WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(@NotNull WebSocketHandlerRegistry registry){
-        registry.addHandler(new WsHandler(),"/ws").addInterceptors(new WsHandshakeInterceptor()).setAllowedOrigins("*");
+        registry.addHandler(wsHandler,"/ws").addInterceptors(new WsHandshakeInterceptor()).setAllowedOrigins("*");
     }
 }

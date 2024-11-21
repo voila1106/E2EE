@@ -22,9 +22,7 @@ public class MiscTest {
 
     @Test
     void ascii(){
-        for(int i = 0x21; i < 0x7f; i++){
-            System.out.println((char) i);
-        }
+        System.out.println(HexUtils.toHexString("asdf".getBytes()));
     }
 
     @Test

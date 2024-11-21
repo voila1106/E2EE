@@ -18,10 +18,10 @@ create table if not exists user_config
 
 create table if not exists message_queue
 (
-    id     varchar(25) primary key references user on delete cascade,
-    type   int,
-    sender text,
-    data   text
+    owner varchar(25) references user (id) on delete cascade,
+    id    int,
+    data  text,
+    primary key (owner, id)
 );
 
 create table file_metadata
@@ -34,7 +34,7 @@ create table file_metadata
 create table file_permission
 (
     hash varchar(32) references file_metadata,
-    user varchar(25) references user(id),
-    primary key (hash,user)
+    user varchar(25) references user (id),
+    primary key (hash, user)
 
 )

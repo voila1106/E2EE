@@ -4,6 +4,7 @@ import com.voila.e2eechatserver.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 /** 登录前的操作 */
 @Mapper
@@ -12,8 +13,12 @@ public interface AccountMapper {
     @Select("select * from user where id=#{id}")
     User getById(String id);
 
-    @Insert("insert into user values (#{id},#{nickname},#{desc},#{pwHash},#{avatar},#{publicKey})")
+    @Insert("insert into user(id, nickname, desc, pwHash, avatar, publicKey) values (#{id},#{nickname},#{desc},#{pwHash},#{avatar},#{publicKey})")
     void register(User user);
+
+    @Update("update user set nickname=#{nickname},desc=#{desc},avatar=#{avatar} where id=#{id}")
+    void updateProfile(User user);
+
 
     @Insert("""
 create table if not exists user(
@@ -26,4 +31,5 @@ create table if not exists user(
 );
 """)
     void init();
+
 }
