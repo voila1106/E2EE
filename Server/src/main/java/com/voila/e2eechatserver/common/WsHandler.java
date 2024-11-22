@@ -1,8 +1,8 @@
 package com.voila.e2eechatserver.common;
 
 import com.voila.e2eechatserver.entity.User;
-import com.voila.e2eechatserver.mapper.AccountMapper;
 import com.voila.e2eechatserver.mapper.MessageQueueMapper;
+import com.voila.e2eechatserver.mapper.UserMapper;
 import com.voila.e2eechatserver.packet.Packet;
 import com.voila.e2eechatserver.util.PacketUtils;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +24,7 @@ public class WsHandler extends AbstractWebSocketHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired
-    AccountMapper mapper;
+    UserMapper mapper;
     @Autowired
     MessageQueueMapper mqMapper;
 
@@ -54,7 +54,11 @@ public class WsHandler extends AbstractWebSocketHandler {
         ByteBuffer byteBuffer = message.getPayload();
         Packet<?> packet = PacketUtils.decode(byteBuffer);
         if(packet != null){
-            packet.handle(session);
+            try{
+                packet.handle(session);
+            }catch(Exception e){
+                LOGGER.catching(e);
+            }
         }
     }
 }

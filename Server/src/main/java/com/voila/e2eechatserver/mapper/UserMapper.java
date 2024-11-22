@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Update;
 
 /** 登录前的操作 */
 @Mapper
-public interface AccountMapper {
+public interface UserMapper {
 
     @Select("select * from user where id=#{id}")
     User getById(String id);
@@ -18,6 +18,9 @@ public interface AccountMapper {
 
     @Update("update user set nickname=#{nickname},desc=#{desc},avatar=#{avatar} where id=#{id}")
     void updateProfile(User user);
+
+    @Select("select 1 from user where id=#{id}")
+    boolean userExists(String id);
 
 
     @Insert("""

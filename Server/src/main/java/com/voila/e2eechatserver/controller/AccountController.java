@@ -2,7 +2,8 @@ package com.voila.e2eechatserver.controller;
 
 import com.voila.e2eechatserver.entity.SimpleMsg;
 import com.voila.e2eechatserver.entity.User;
-import com.voila.e2eechatserver.mapper.AccountMapper;
+import com.voila.e2eechatserver.mapper.UserConfigMapper;
+import com.voila.e2eechatserver.mapper.UserMapper;
 import com.voila.e2eechatserver.validation.Password;
 import com.voila.e2eechatserver.validation.PublicKey;
 import com.voila.e2eechatserver.validation.UserId;
@@ -28,24 +29,27 @@ public class AccountController {
     private static final String SALT = "f6dc9bd0-0c19-4ac4-c6b7-d4bb9ef44fa1";
 
     @Autowired
-    AccountMapper accountMapper;
+    UserMapper userMapper;
+    @Autowired
+    UserConfigMapper userConfigMapper;
 
     @PostMapping("/register")
     public Object register(@UserId String id, @Length(min = 1,max = 80) String nickname,
                            @Password String password, @PublicKey String publicKey){
 
-        if(accountMapper.getById(id) != null){
+        if(userMapper.getById(id) != null){
             return simpleMsg(400, "Account exists");
         }
 
         User user = User.builder().id(id).nickname(nickname).publicKey(publicKey).pwHash(encodePassword(password, id)).build();
-        accountMapper.register(user);
+        userMapper.register(user);
+        userConfigMapper.register(id);
         return SimpleMsg.OK;
     }
 
     @PostMapping("/login")
     public Object login(String id, String password, HttpServletRequest request){
-        User user = accountMapper.getById(id);
+        User user = userMapper.getById(id);
         if(user == null){
             return simpleMsg(400, "User not found");
         }

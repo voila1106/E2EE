@@ -8,8 +8,10 @@ import com.voila.e2eechatserver.mapper.MessageQueueMapper;
 import com.voila.e2eechatserver.packet.Codec;
 import com.voila.e2eechatserver.packet.Packet;
 import com.voila.e2eechatserver.packet.c2s.EditProfilePacket;
+import com.voila.e2eechatserver.packet.c2s.FriendRequestPacketC2S;
 import com.voila.e2eechatserver.packet.c2s.MessageQueueReceivedPacket;
-import com.voila.e2eechatserver.packet.common.FriendRequestPacket;
+import com.voila.e2eechatserver.packet.common.FriendRequestResponsePacket;
+import com.voila.e2eechatserver.packet.s2c.FriendRequestPacketS2C;
 import com.voila.e2eechatserver.packet.s2c.MessageStatusPacket;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.socket.BinaryMessage;
@@ -24,10 +26,12 @@ import java.util.Map;
 public class PacketUtils {
 
     public static Map<Integer, Codec<? extends Packet<?>>> codecById = new ImmutableMap.Builder<Integer, Codec<?>>()
-        .put(0, FriendRequestPacket.CODEC)
-        .put(1, MessageQueueReceivedPacket.CODEC)
-        .put(2, MessageStatusPacket.CODEC)
-        .put(3, EditProfilePacket.CODEC)
+        .put(0, new FriendRequestPacketC2S())
+        .put(1, new MessageQueueReceivedPacket())
+        .put(2, new MessageStatusPacket())
+        .put(3, new EditProfilePacket())
+        .put(4, new FriendRequestResponsePacket())
+        .put(5, new FriendRequestPacketS2C())
         .build();
     public static final Map<Codec<?>, Integer> codecToId;
 
@@ -61,17 +65,20 @@ public class PacketUtils {
         return codec.encode(packet, id).position(0);
     }
 
-    public static void putString(String str, ByteBuffer buffer) {
-        byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
-        buffer.putInt(bytes.length);
-        buffer.put(bytes);
+    public static void putString(String str, ByteBuffer buffer){
+        putBytes(str.getBytes(StandardCharsets.UTF_8), buffer);
     }
 
-    public static String getString(ByteBuffer buffer) {
+    public static String getString(ByteBuffer buffer){
         int length = buffer.getInt();
         byte[] bytes = new byte[length];
         buffer.get(bytes);
         return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    public static void putBytes(byte[] src, ByteBuffer buffer){
+        buffer.putInt(src.length);
+        buffer.put(src);
     }
 
     public static <T extends Packet<T>> void sendPacket(T packet, WebSocketSession wsSession){
@@ -89,8 +96,13 @@ public class PacketUtils {
             MessageQueueMapper mqMapper = ComponentManager.messageQueueMapper;
             int maxId = mqMapper.getMaxId();
             mqMapper.enqueue(sendToId, maxId + 1, encode(packet).array());
-        }else {
+        }else{
             sendPacket(packet, user.getWsSession());
         }
     }
+
+    public static User getUser(WebSocketSession session){
+        return (User) session.getAttributes().get("user");
+    }
+
 }

@@ -1,8 +1,9 @@
 package com.voila.e2eechatserver.common;
 
-import com.voila.e2eechatserver.mapper.AccountMapper;
+import com.voila.e2eechatserver.mapper.FriendMapper;
 import com.voila.e2eechatserver.mapper.MessageQueueMapper;
 import com.voila.e2eechatserver.mapper.UserConfigMapper;
+import com.voila.e2eechatserver.mapper.UserMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,25 +11,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class ComponentManager {
     @Autowired
-    private AccountMapper am;
+    private UserMapper am;
     @Autowired
     private MessageQueueMapper mqm;
     @Autowired
     private UserConfigMapper ucm;
+    @Autowired
+    private FriendMapper fm;
 
-    public static AccountMapper accountMapper;
+    public static UserMapper userMapper;
     public static MessageQueueMapper messageQueueMapper;
     public static UserConfigMapper userConfigMapper;
+    public static FriendMapper friendMapper;
 
     @PostConstruct
     public void init() {
-        accountMapper = am;
+        userMapper = am;
         messageQueueMapper = mqm;
         userConfigMapper = ucm;
+        friendMapper = fm;
 
         am.init();
         mqm.init();
         ucm.init();
+        fm.init();
     }
 
 }
