@@ -1,3 +1,3 @@
 include ":Server"
 include ":Windows-Client"
-include ":Android-Client"
+//include ":Android-Client"
